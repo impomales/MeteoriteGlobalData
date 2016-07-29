@@ -6,6 +6,12 @@
   margin-bottom: 50px;
 }
 
+.circle {
+  stroke-width: 1;
+  stroke: white;
+  fill: red;
+}
+
 body {
   background-color: #ccc;
 }
