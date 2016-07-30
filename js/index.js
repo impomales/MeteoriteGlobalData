@@ -3,6 +3,7 @@ $(document).ready(function() {
   var height = 650;
   var worldURL = 'https://raw.githubusercontent.com/mbostock/topojson/master/examples/world-110m.json';
   var meteoriteJSON = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json';
+  var nasaJSON = 'https://data.nasa.gov/resource/y77d-th95.geojson';
   
   var projection = d3.geo.mercator();
   
@@ -22,10 +23,9 @@ $(document).ready(function() {
       .enter().append("path")
         .attr('d', path);
     
-    d3.json(meteoriteJSON, function(error, data) {
-      // need to add circle to map using coordinates.
-      var maxMass = d3.max(data.features.map(function(d) {return parseInt(d.properties.mass);}));
-      
+    d3.json(nasaJSON, function(error, data) {
+      var max = d3.max(data.features.map(function(d) {return parseFloat(d.properties.mass);}));
+      console.log(max);
       g.selectAll("circle")
         .data(data.features)
         .enter().append('circle')
@@ -35,7 +35,15 @@ $(document).ready(function() {
           return  projection([d.properties.reclong, d.properties.reclat])[0];})
         .attr('cy', function(d) {
           return projection([d.properties.reclong, d.properties.reclat])[1];})
-        .attr('r', function(d) {return 5;});
+        .attr('r', function(d) {
+          var mass = parseFloat(d.properties.mass);
+          if (mass < 100000) return 2;
+          if (mass < 200000) return 5;
+          if (mass < 300000) return 10;
+          if (mass < 2000000) return 15;
+          if (mass < 10000000) return 20;
+          return 25;
+        });
     }); 
   });
 });
